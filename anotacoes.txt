@@ -1,0 +1,11 @@
+Electre TRI
+
+Passos:
+
+Definição das classes
+
+
+
+Avaliação Pessimista
+
+Avaliação Otimista
