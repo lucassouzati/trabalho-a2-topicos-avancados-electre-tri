@@ -4,6 +4,7 @@
 
 from random import randint
 from random import choice
+from collections import defaultdict
 
 
 def main():
@@ -40,18 +41,30 @@ def main():
 	c = 0.65
 	#indice de discordancia
 	d = 0.35
+	
 	#limite de preferência
 	p = 2.0
+	print 'Limite de Preferência', p
+	print '\n'
 	#limite de indiferença
 	q = 1.0
+	print 'Limite de Indiferença', q
+	print '\n'
+
 	#limite de veto
 	v = 1.0
+	print 'Limite de Veto', v
+	print '\n'
+
 	#lambda de corte
 	lamb = 0.7
+	print 'Lambda de Corte', lamb
+	print '\n'
 
 	# Classes ordenadas
 
-	classes = ['Excelente', 'Bom', 'Regular', 'Ruim', 'Péssimo']
+	classes = ['Excelente', 'Bom', 'Regular', 'Ruim', 'Pessimo']
+
 	limites= []
 	numeros = 8.0
 
@@ -60,7 +73,7 @@ def main():
 		for j in range(nCriterios):
 			limites_linhas.append(numeros)
 		limites.append(limites_linhas)	
-		print classes[i], limites[i]
+		print limites[i], classes[i]
 		numeros -= 2.0
 
 	print "\n \n"
@@ -97,6 +110,9 @@ def main():
 	# destilacao(cidades, nAlternativas, nCriterios, mCredibilidade)
 
 	subordinacao = matrizSubordinacao(cidades, tabela, nAlternativas, nCriterios, p, v, mCredibilidadeAB, mCredibilidadeBA, lamb, classes)
+
+	classificacaoPessimista(cidades, nAlternativas, nCriterios, subordinacao, classes, limites)	
+	classificacaoOtimista(cidades, nAlternativas, nCriterios, subordinacao, classes, limites)	
 
 	print "\n"
 
@@ -396,6 +412,42 @@ def matrizSubordinacao(cidades, tabela, nAlternativas, nCriterios, p, v, mCredib
 	 		linha.append(valor)
 	 		print cidades[i], valor, classes[j]
 	 	subordinacao.append(linha)
+
+	return subordinacao
+
+def classificacaoPessimista(cidades, nAlternativas, nCriterios, subordinacao, classes, limites):
+	print "\n\n Classificação Pessimista \n"
+	classificacao = defaultdict(list)
+
+
+	for i in range(nAlternativas):	
+		linha = []
+		for j in range(len(classes)):
+			# print j
+			if(subordinacao[i][j] < 2):
+				break
+		if(j < len(classes)):
+			classificacao[classes[j+1]].append(cidades[i])	
+		else:
+			classificacao[classes[j]].append(cidades[i])	
+	print(classificacao)
+
+def classificacaoOtimista(cidades, nAlternativas, nCriterios, subordinacao, classes, limites):
+	print "\n\n Classificação Otimista \n"
+	classificacao = defaultdict(list)
+
+
+	for i in range(nAlternativas):	
+		linha = []
+		for j in reversed(range(len(classes))):
+			# print j
+			if(subordinacao[i][j] < 2):
+				break
+		classificacao[classes[j]].append(cidades[i])	
+
+	print(classificacao)
+
+
 
 
 main()
