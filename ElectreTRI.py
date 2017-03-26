@@ -26,6 +26,7 @@ def main():
 		'Brasilia',
 		'Salvador',
 		'Florianopolis',
+		'Itaperuna',
 		]
 
 	nAlternativas= len(cidades) #Linhas
@@ -422,17 +423,20 @@ def matrizSubordinacao(cidades, tabela, nAlternativas, nCriterios, p, v, mCredib
 		linha = []
 	 	for j in range(len(mCredibilidadeAB[i])):
 	 		valor = 0
-	 		if(mCredibilidadeAB[i][j] >= lamb) and (mCredibilidadeBA[i][j] >= lamb):
+	 		if(mCredibilidadeAB[i][j] >= lamb) and (mCredibilidadeBA[j][i] >= lamb):
 	 			valor = 0
-	 		elif (mCredibilidadeAB[i][j] >= lamb) and not(mCredibilidadeBA[i][j] >= lamb):
+	 		elif (mCredibilidadeAB[i][j] >= lamb) and not(mCredibilidadeBA[j][i] >= lamb):
 	 			valor = 1
-	 		elif not(mCredibilidadeAB[i][j] >= lamb) and (mCredibilidadeBA[i][j] >= lamb):
+	 		elif not(mCredibilidadeAB[i][j] >= lamb) and (mCredibilidadeBA[j][i] >= lamb):
 	 			valor = 2
-	 		elif not(mCredibilidadeAB[i][j] >= lamb) and not(mCredibilidadeBA[i][j] >= lamb):
+	 		elif not(mCredibilidadeAB[i][j] >= lamb) and not(mCredibilidadeBA[j][i] >= lamb):
 	 			valor = 3
 	 		linha.append(valor)
 	 		print cidades[i], valor, classes[j]
 	 	subordinacao.append(linha)
+	 	print('\n')
+	 	print subordinacao[i], 'Subordinacao',
+	 	print('\n')
 
 	return subordinacao
 
@@ -447,7 +451,7 @@ def classificacaoPessimista(cidades, nAlternativas, nCriterios, subordinacao, cl
 			# print j
 			if(subordinacao[i][j] < 2):
 				break
-		if(j < len(classes)):
+		if(j < len(classes) - 1):
 			classificacao[classes[j+1]].append(cidades[i])	
 		else:
 			classificacao[classes[j]].append(cidades[i])	
@@ -460,12 +464,16 @@ def classificacaoOtimista(cidades, nAlternativas, nCriterios, subordinacao, clas
 
 	for i in range(nAlternativas):	
 		linha = []
+		achou = 0
 		for j in reversed(range(len(classes))):
 			# print j
 			if(subordinacao[i][j] < 2):
+				achou = 1
 				break
-		classificacao[classes[j]].append(cidades[i])	
-
+		if(achou):
+			classificacao[classes[j]].append(cidades[i])	
+		else:
+			classificacao[classes[len(classes) - 1]].append(cidades[i])	
 	print(classificacao)
 
 
