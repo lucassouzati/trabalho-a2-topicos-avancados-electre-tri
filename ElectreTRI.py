@@ -100,8 +100,8 @@ def main():
 	mConcordanciaAB = matrizConcordanciaTRI(cidades, classes, tabela, nAlternativas, nCriterios, vetorPesos, p, q, limites, 0)
 	mConcordanciaBA = matrizConcordanciaTRI(cidades, classes, tabela, nAlternativas, nCriterios, vetorPesos, p, q, limites, 1)
 
-	mDiscordanciaAB = matrizDiscordanciaTRI(cidades, tabela, nAlternativas, nCriterios, vetorPesos, p, v, limites)
-	mDiscordanciaBA = matrizDiscordanciaTRI(cidades, limites, nAlternativas, nCriterios, vetorPesos, p, v,tabela)
+	mDiscordanciaAB = matrizDiscordanciaTRI(cidades, classes, tabela, nAlternativas, nCriterios, vetorPesos, p, v, limites, 0)
+	mDiscordanciaBA = matrizDiscordanciaTRI(cidades, classes, tabela, nAlternativas, nCriterios, vetorPesos, p, v, limites, 1)
 	# mDiscordancia = matrizDisconcordancia(cidades, tabela, nAlternativas, nCriterios, vetorPesos, p, v)
 
 	mCredibilidadeAB = matrizCredibilidadeTRI(cidades, nAlternativas, nCriterios, mConcordanciaAB, mDiscordanciaAB, limites)
@@ -229,71 +229,46 @@ def matrizConcordanciaTRI(cidades, classes, tabela, nAlternativas, nCriterios, v
 
     	return mConcordancia
 
-    	# for in in range(nAlternativas):
-    	# 	linha = []
-    	# 	for j in range(len(limites[i])):
-    	# 		valor = 0
-    	# 		if (tabela[i][j] - limites[i][j]) >= p:
-    	# 			valor = 0
-    	# 		else if (tabela[i][j] - limites[i][j]) < q:
-    	# 			valor = 1
-    	# 		else:
-    	# 			valor = (p + limites[i][j] - tabela[i][j] ) / (p - q)
-    	# 		linha.append(valor)
-    	# 	mConcordanciaParcialBA.append(linha)
 
-    	# for i in range(nAlternativas):
-    	# 	linha = []
-    	# 	for j in range(len(mConcordanciaParcial)):
-    	# 		linha.append(round (somaPesos * (mConcordanciaParcial[i][j] / somaPesos), 2))
-    	# 	mConcordancia.append(linha)
-    	# 	print mConcordancia[i], cidades[i]
-
-    	# return mConcordancia
-
-    	# #Laço para alternativa a ser comparada
-    	# for i in range(nAlternativas):
-    	# 	linha = []
-    	# 	#Laço para o criterio a ser comparado
-    	# 	for j in range(len(tabela[i])):
-    	# 		#Laço para percorrer matriz
-    	# 		somatorioW = 0
-    	# 		for y in range(nCriterios):
-    	# 			valor = 0
-    	# 			if tabela[i][y] > (tabela[j][y] - q):
-    	# 				valor = 1
-    	# 			else:
-    	# 				if tabela[i][y] <= (tabela[j][y] - p):
-    	# 					valor = 0
-    	# 					#print tabela[i][y], tabela[j][y], q, tabela[j][y] - q
-    	# 				else:
-    	# 					somatorioW += vetorPesos[y] * ((p-(tabela[i][y]- tabela[j][y]))/p-q)
-    	# 			if valor == 1:
-    	# 				somatorioW += vetorPesos[y]
-    	# 		result = 1.0/somaPesos * somatorioW
-    	# 		linha.append(round(result, 2))
-    	# 		#print result
-    	# 	mConcordancia.append(linha)
-    	# 	print mConcordancia[i], cidades[i]
-    	# return mConcordancia
-
-def matrizDiscordanciaTRI(cidades, tabela, nAlternativas, nCriterios, vetorPesos, p, v, limites):
+def matrizDiscordanciaTRI(cidades, classes, tabela, nAlternativas, nCriterios, vetorPesos, p, v, limites, inverte):
 	print "\nMatrizes de Discordância  por Alternativa\n"
 	mDiscordancia = []
 
-	for i in range(nAlternativas):
-		linha = []
-		for j in range(len(limites[i])):
-			valor = 0.0
-			if(limites[i][j] - tabela[i][j]) < p:
-				valor = 0.0
-			elif(limites[i][j] - tabela[i][j]) >= v:
-				valor = 1.0
-			else:
-				valor= round((limites[i][j] - tabela[i][j] - p) / (v - p), 2)
-			linha.append(valor)
-		mDiscordancia.append(linha)
-		print mDiscordancia[i], cidades[i]
+	if (inverte == 0):
+		for i in range(nAlternativas):
+			linha = []
+			for j in range(nCriterios):
+				resultado = 0
+				for k in range(len(classes)):
+					valor = 0.0
+					if(limites[k][j] - tabela[i][j]) < p:
+						valor = 0.0
+					elif(limites[k][j] - tabela[i][j]) >= v:
+						valor = 1.0
+					else:
+						valor += round((limites[k][j] - tabela[i][j] - p) / (v - p), 2)
+					resultado += valor
+				linha.append(round(resultado, 2))
+			mDiscordancia.append(linha)
+			print mDiscordancia[i], cidades[i]
+	else:
+		for in range(len(classes)):
+			linha = []
+			for j in range(nAlternativas):
+				resultado = 0
+				for k in range(nCriterios):
+					valor = 0.0
+					if(tabela[j][j] - limites[i][k]) < p:
+						valor = 0.0
+					elif(tabela[j][j] - limites[i][k]) >= v:
+						valor = 1.0
+					else:
+						valor += round((limites[k][j] - tabela[i][j] - p) / (v - p), 2)
+					resultado += valor
+					linha.append(round(resultado, 2))
+			mDiscordancia.append(linha)
+			print mDiscordancia[i], cidades[i]
+
 
 	return mDiscordancia
 
