@@ -47,7 +47,7 @@ def main():
 	#limite de veto
 	v = 1.0
 	#lambda de corte
-	lamb = 1.0
+	lamb = 0.7
 
 	# Classes ordenadas
 
@@ -96,7 +96,7 @@ def main():
 
 	# destilacao(cidades, nAlternativas, nCriterios, mCredibilidade)
 
-	# subordinacao = matrizSubordinacao(cidades, tabela, nAlternativas, nCriterios, p, v, mCredibilidade, lamb)
+	subordinacao = matrizSubordinacao(cidades, tabela, nAlternativas, nCriterios, p, v, mCredibilidadeAB, mCredibilidadeBA, lamb, classes)
 
 	print "\n"
 
@@ -372,12 +372,30 @@ def matrizCredibilidadeTRI(cidades, nAlternativas, nCriterios, mConcordancia, mD
 
 	# return matrizCredibilidade
 
-def matrizSubordinacao(cidades, tabela, nAlternativas, nCriterios, p, v, mCredibilidade, lamb):
+def matrizSubordinacao(cidades, tabela, nAlternativas, nCriterios, p, v, mCredibilidadeAB, mCredibilidadeBA, lamb, classes):
 	print "\n\nRelação de Subordinação \n"	
 	subordinacao = []
 
-	# for i in range(nAlternativas):
-	# 	for j in range(len(mCredibilidade[i])):
+	#0 - Indiferença
+	#1 - ASB
+	#2 - BSA
+	#3 - !ASB AND !BSA
+
+	for i in range(nAlternativas):
+		linha = []
+	 	for j in range(len(mCredibilidadeAB[i])):
+	 		valor = 0
+	 		if(mCredibilidadeAB[i][j] >= lamb) and (mCredibilidadeBA[i][j] >= lamb):
+	 			valor = 0
+	 		elif (mCredibilidadeAB[i][j] >= lamb) and not(mCredibilidadeBA[i][j] >= lamb):
+	 			valor = 1
+	 		elif not(mCredibilidadeAB[i][j] >= lamb) and (mCredibilidadeBA[i][j] >= lamb):
+	 			valor = 2
+	 		elif not(mCredibilidadeAB[i][j] >= lamb) and not(mCredibilidadeBA[i][j] >= lamb):
+	 			valor = 3
+	 		linha.append(valor)
+	 		print cidades[i], valor, classes[j]
+	 	subordinacao.append(linha)
 
 
 main()
