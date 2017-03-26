@@ -25,9 +25,10 @@ def main():
 		'Belo Horizonte',
 		'Brasilia',
 		'Salvador',
+		'Florianopolis',
 		]
 
-	nAlternativas= 5 #Linhas
+	nAlternativas= len(cidades) #Linhas
 	nCriterios = 5 #Colunas
 
 	vetorPesos=[0.1, 0.1, 0.2, 0.3, 0.3]
@@ -96,8 +97,8 @@ def main():
 
 	print "\n\nMétodo Electre TRI\n"
 
-	mConcordanciaAB = matrizConcordanciaTRI(cidades, tabela, nAlternativas, nCriterios, vetorPesos, p, q, limites)
-	mConcordanciaBA = matrizConcordanciaTRI(cidades, limites, nAlternativas, nCriterios, vetorPesos, p, q, tabela)
+	mConcordanciaAB = matrizConcordanciaTRI(cidades, classes, tabela, nAlternativas, nCriterios, vetorPesos, p, q, limites, 0)
+	mConcordanciaBA = matrizConcordanciaTRI(cidades, classes, tabela, nAlternativas, nCriterios, vetorPesos, p, q, limites, 1)
 
 	mDiscordanciaAB = matrizDiscordanciaTRI(cidades, tabela, nAlternativas, nCriterios, vetorPesos, p, v, limites)
 	mDiscordanciaBA = matrizDiscordanciaTRI(cidades, limites, nAlternativas, nCriterios, vetorPesos, p, v,tabela)
@@ -171,7 +172,7 @@ def matrizConcordancia(cidades, tabela, nAlternativas, nCriterios, vetorPesos, p
     		print mConcordancia[i], cidades[i]
     	return mConcordancia
 
-def matrizConcordanciaTRI(cidades, tabela, nAlternativas, nCriterios, vetorPesos, p, q, limites):
+def matrizConcordanciaTRI(cidades, classes, tabela, nAlternativas, nCriterios, vetorPesos, p, q, limites, inverte):
     	print "\nMatriz de Concordância Global\n"
 
     	somaPesos = 0
@@ -187,20 +188,46 @@ def matrizConcordanciaTRI(cidades, tabela, nAlternativas, nCriterios, vetorPesos
     		somaPesos += vetorPesos[x]
 
 
+    	if (inverte == 0):
+	    	for i in range(nAlternativas):
+	    		linha = []
+	    		for j in range(nCriterios):
+	    			somatorio = 0
+	    			for k in range(len(classes)):
+		    			valor = 0.0
+		    			# print(k, j)
+		    			if (limites[k][j] - tabela[i][j]) >= p:
+		    				valor = 0.0
+		    			elif (limites[k][j] - tabela[i][j]) < q:
+		    				valor = 1.0
+		    			else:
+		    				valor += (p + tabela[i][j] - limites[k][j]) / (p - q)
+		    			somatorio += valor
+	    			linha.append(round(somatorio,2))
+	    			# print(valor)
+	    		mConcordancia.append(linha)
+	    		print(mConcordancia[i], cidades[i])
+    	else:
+	    	for i in range(len(classes)):
+	    		linha = []
+	    		for j in range(nAlternativas):
+	    			somatorio = 0
+	    			for k in range(nCriterios):
+	    				valor = 0.0
+		    			# print(k, j)
+		    			if (tabela[j][k] - limites[i][k]) >= p:
+		    				valor = 0.0
+		    			elif (tabela[j][k] - limites[i][k]) < q:
+		    				valor = 1.0
+		    			else:
+		    				valor += (p + tabela[j][k] - limites[i][k]) / (p - q)
+		    			somatorio += valor
+	    			linha.append(round(somatorio,2))
+	    		mConcordancia.append(linha)
+	    		print(mConcordancia[i], classes[i])
 
-    	for i in range(nAlternativas):
-    		linha = []
-    		for j in range(len(tabela[i])):
-    			valor = 0.0
-    			if (limites[i][j] - tabela[i][j]) >= p:
-    				valor = 0.0
-    			elif (limites[i][j] - tabela[i][j]) < q:
-    				valor = 1.0
-    			else:
-    				valor = (p + tabela[i][j] - limites[i][j]) / (p - q)
-    			linha.append(valor)
-    			# print(valor)
-    		mConcordanciaParcial.append(linha)
+
+    	return mConcordancia
 
     	# for in in range(nAlternativas):
     	# 	linha = []
@@ -215,14 +242,14 @@ def matrizConcordanciaTRI(cidades, tabela, nAlternativas, nCriterios, vetorPesos
     	# 		linha.append(valor)
     	# 	mConcordanciaParcialBA.append(linha)
 
-    	for i in range(nAlternativas):
-    		linha = []
-    		for j in range(len(mConcordanciaParcial)):
-    			linha.append(round (somaPesos * (mConcordanciaParcial[i][j] / somaPesos), 2))
-    		mConcordancia.append(linha)
-    		print mConcordancia[i], cidades[i]
+    	# for i in range(nAlternativas):
+    	# 	linha = []
+    	# 	for j in range(len(mConcordanciaParcial)):
+    	# 		linha.append(round (somaPesos * (mConcordanciaParcial[i][j] / somaPesos), 2))
+    	# 	mConcordancia.append(linha)
+    	# 	print mConcordancia[i], cidades[i]
 
-    	return mConcordancia
+    	# return mConcordancia
 
     	# #Laço para alternativa a ser comparada
     	# for i in range(nAlternativas):
