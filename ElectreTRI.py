@@ -252,20 +252,20 @@ def matrizDiscordanciaTRI(cidades, classes, tabela, nAlternativas, nCriterios, v
 			mDiscordancia.append(linha)
 			print mDiscordancia[i], cidades[i]
 	else:
-		for in range(len(classes)):
+		for i in range(len(classes)):
 			linha = []
 			for j in range(nAlternativas):
 				resultado = 0
 				for k in range(nCriterios):
 					valor = 0.0
-					if(tabela[j][j] - limites[i][k]) < p:
+					if(tabela[j][k] - limites[i][k]) < p:
 						valor = 0.0
-					elif(tabela[j][j] - limites[i][k]) >= v:
+					elif(tabela[j][k] - limites[i][k]) >= v:
 						valor = 1.0
 					else:
 						valor += round((limites[k][j] - tabela[i][j] - p) / (v - p), 2)
 					resultado += valor
-					linha.append(round(resultado, 2))
+				linha.append(round(resultado, 2))
 			mDiscordancia.append(linha)
 			print mDiscordancia[i], cidades[i]
 
