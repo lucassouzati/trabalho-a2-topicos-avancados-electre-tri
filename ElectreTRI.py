@@ -104,8 +104,8 @@ def main():
 	mDiscordanciaBA = matrizDiscordanciaTRI(cidades, classes, tabela, nAlternativas, nCriterios, vetorPesos, p, v, limites, 1)
 	# mDiscordancia = matrizDisconcordancia(cidades, tabela, nAlternativas, nCriterios, vetorPesos, p, v)
 
-	mCredibilidadeAB = matrizCredibilidadeTRI(cidades, nAlternativas, nCriterios, mConcordanciaAB, mDiscordanciaAB, limites)
-	mCredibilidadeBA = matrizCredibilidadeTRI(cidades, nAlternativas, nCriterios, mConcordanciaBA, mDiscordanciaBA, limites)
+	mCredibilidadeAB = matrizCredibilidadeTRI(cidades, classes, nAlternativas, nCriterios, mConcordanciaAB, mDiscordanciaAB, limites, 0)
+	mCredibilidadeBA = matrizCredibilidadeTRI(cidades, classes, nAlternativas, nCriterios, mConcordanciaBA, mDiscordanciaBA, limites, 1)
 	# mCredibilidade = matrizCredibilidade(cidades, nAlternativas, nCriterios, mConcordancia, mDiscordancia)
 
 	# destilacao(cidades, nAlternativas, nCriterios, mCredibilidade)
@@ -341,27 +341,46 @@ def matrizCredibilidade(cidades, nAlternativas, nCriterios, mConcordancia, mDisc
 
 	return matrizCredibilidade
 
-def matrizCredibilidadeTRI(cidades, nAlternativas, nCriterios, mConcordancia, mDiscordancia, limites):
+def matrizCredibilidadeTRI(cidades, classes, nAlternativas, nCriterios, mConcordancia, mDiscordancia, limites, inverte):
 	print "\n\nMatriz de Credibilidade\n"
 
 	matrizCredibilidade = []
 	mCredibilidade= []
 
-	for i in range(nAlternativas):
-		linha=[]
-		for j in range(len(limites[i])):
-			valor = 1
-			if(mDiscordancia[i][j] > mConcordancia[i][j]):
+	if(inverte == 0):
+		for i in range(nAlternativas):
+			linha=[]
+			for j in range(len(mConcordancia[0])):
 				valor = 1.0
-			elif(mConcordancia[i][j] == 1.0):
+				if(mDiscordancia[i][j] > mConcordancia[i][j]):
+					valor = 1.0
+				# elif(mConcordancia[i][j] == 1.0):
+				# 	valor = 1.0
+				else:
+					# print mDiscordancia[i][j], mConcordancia[i][j]
+					for k in range(nCriterios):
+						valor *= ((1 - mDiscordancia[i][k]) / (1 - mConcordancia[i][j]))
+				linha.append(round(mConcordancia[i][j] * valor, 2))		
+			mCredibilidade.append(linha)
+			print mCredibilidade[i], cidades[i]
+	else:
+		for i in range(len(classes)):
+			linha=[]
+			for j in range(len(mConcordancia[0])):
 				valor = 1.0
-			else:
-				# print mDiscordancia[i][j], mConcordancia[i][j]
-				for k in range(nCriterios):
-					valor *= ((1 - mDiscordancia[i][k]) / (1 - mConcordancia[i][j]))
-			linha.append(round(mConcordancia[i][j] * valor, 2))		
-		mCredibilidade.append(linha)
-		print(mCredibilidade[i], cidades[i])
+				if(mDiscordancia[i][j] > mConcordancia[i][j]):
+					valor = 1.0
+				# elif(mConcordancia[i][j] == 1.0):
+				# 	valor = 1.0
+				else:
+					# print mDiscordancia[i][j], mConcordancia[i][j]
+					for k in range(nCriterios):
+						valor *= ((1 - mDiscordancia[i][k]) / (1 - mConcordancia[i][j]))
+				linha.append(round(mConcordancia[i][j] * valor, 2))		
+			mCredibilidade.append(linha)
+			print mCredibilidade[i], cidades[i]
+	
+
 
 	return mCredibilidade
 	# for i in range(nAlternativas):
