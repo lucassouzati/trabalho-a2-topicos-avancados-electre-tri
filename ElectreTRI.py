@@ -12,8 +12,8 @@ def main():
 
 	print "Pesquisa: Preferência de Cidades\n"
 
-	print "Determinar a ordem das cidades em que voce moraria, atribuindo notas de 1 a 9:"
-	print "Sendo 9 para o critério que você considera de maior importância e 1 para o que você considera de menor importância \n"
+	print "Determinar a ordem das cidades em que voce moraria, atribuindo notas de 1 a 10:"
+	print "Sendo 10 para o critério que você considera de maior importância e 1 para o que você considera de menor importância \n"
 
 
 	print "Resultados:\n"
@@ -86,6 +86,8 @@ def main():
 	mConcordanciaAB = matrizConcordanciaTRI(cidades, tabela, nAlternativas, nCriterios, vetorPesos, p, q, limites)
 	mConcordanciaBA = matrizConcordanciaTRI(cidades, limites, nAlternativas, nCriterios, vetorPesos, p, q, tabela)
 
+	mDiscordanciaAB = matrizDiscordanciaTRI(cidades, tabela, nAlternativas, nCriterios, vetorPesos, p, v, limites)
+	mDiscordanciaBA = matrizDiscordanciaTRI(cidades, limites, nAlternativas, nCriterios, vetorPesos, p, v,tabela)
 	# mDiscordancia = matrizDisconcordancia(cidades, tabela, nAlternativas, nCriterios, vetorPesos, p, v)
 
 	# mCredibilidade = matrizCredibilidade(cidades, nAlternativas, nCriterios, mConcordancia, mDiscordancia)
@@ -106,7 +108,7 @@ def geraTabelaPagamento(nAlternativas, nCriterios):
 			for k in range(i):
 				colunaatual.append(matriz[k][j])
 			while (achounumero == 0):
-				num = choice([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0])
+				num = choice([1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.0])
 				if num in colunaatual:
 					continue
 				else:
@@ -229,6 +231,24 @@ def matrizConcordanciaTRI(cidades, tabela, nAlternativas, nCriterios, vetorPesos
     	# 	mConcordancia.append(linha)
     	# 	print mConcordancia[i], cidades[i]
     	# return mConcordancia
+
+def matrizDiscordanciaTRI(cidades, tabela, nAlternativas, nCriterios, vetorPesos, p, v, limites):
+	print "\nMatrizes de Discordância  por Alternativa\n"
+	mDiscordancia = []
+
+	for i in range(nAlternativas):
+		linha = []
+		for j in range(len(limites[i])):
+			valor = 0.0
+			if(limites[i][j] - tabela[i][j]) < p:
+				valor = 0.0
+			elif(limites[i][j] - tabela[i][j]) >= v:
+				valor = 1.0
+			else:
+				valor= (limites[i][j] - tabela[i][j] - p) / (v - p)
+			linha.append(valor)
+		mDiscordancia.append(linha)
+		print mDiscordancia[i], cidades[i]
 
 def matrizDisconcordancia(cidades, tabela, nAlternativas, nCriterios, vetorPesos, p, v):
 	print "\nMatrizes de Discordância  por Critério\n"
