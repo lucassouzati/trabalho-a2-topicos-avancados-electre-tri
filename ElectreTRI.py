@@ -90,6 +90,8 @@ def main():
 	mDiscordanciaBA = matrizDiscordanciaTRI(cidades, limites, nAlternativas, nCriterios, vetorPesos, p, v,tabela)
 	# mDiscordancia = matrizDisconcordancia(cidades, tabela, nAlternativas, nCriterios, vetorPesos, p, v)
 
+	mCredibilidadeAB = matrizCredibilidadeTRI(cidades, nAlternativas, nCriterios, mConcordanciaAB, mDiscordanciaAB, limites)
+	mCredibilidadeBA = matrizCredibilidadeTRI(cidades, nAlternativas, nCriterios, mConcordanciaBA, mDiscordanciaBA, limites)
 	# mCredibilidade = matrizCredibilidade(cidades, nAlternativas, nCriterios, mConcordancia, mDiscordancia)
 
 	# destilacao(cidades, nAlternativas, nCriterios, mCredibilidade)
@@ -181,7 +183,7 @@ def matrizConcordanciaTRI(cidades, tabela, nAlternativas, nCriterios, vetorPesos
     			else:
     				valor = (p + tabela[i][j] - limites[i][j]) / (p - q)
     			linha.append(valor)
-    			print(valor)
+    			# print(valor)
     		mConcordanciaParcial.append(linha)
 
     	# for in in range(nAlternativas):
@@ -200,7 +202,7 @@ def matrizConcordanciaTRI(cidades, tabela, nAlternativas, nCriterios, vetorPesos
     	for i in range(nAlternativas):
     		linha = []
     		for j in range(len(mConcordanciaParcial)):
-    			linha.append(somaPesos * (mConcordanciaParcial[i][j] / somaPesos))
+    			linha.append(round (somaPesos * (mConcordanciaParcial[i][j] / somaPesos), 2))
     		mConcordancia.append(linha)
     		print mConcordancia[i], cidades[i]
 
@@ -245,10 +247,12 @@ def matrizDiscordanciaTRI(cidades, tabela, nAlternativas, nCriterios, vetorPesos
 			elif(limites[i][j] - tabela[i][j]) >= v:
 				valor = 1.0
 			else:
-				valor= (limites[i][j] - tabela[i][j] - p) / (v - p)
+				valor= round((limites[i][j] - tabela[i][j] - p) / (v - p), 2)
 			linha.append(valor)
 		mDiscordancia.append(linha)
 		print mDiscordancia[i], cidades[i]
+
+	return mDiscordancia
 
 def matrizDisconcordancia(cidades, tabela, nAlternativas, nCriterios, vetorPesos, p, v):
 	print "\nMatrizes de Discordância  por Critério\n"
@@ -318,6 +322,55 @@ def matrizCredibilidade(cidades, nAlternativas, nCriterios, mConcordancia, mDisc
 		print matrizCredibilidade[x], cidades[x]
 
 	return matrizCredibilidade
+
+def matrizCredibilidadeTRI(cidades, nAlternativas, nCriterios, mConcordancia, mDiscordancia, limites):
+	print "\n\nMatriz de Credibilidade\n"
+
+	matrizCredibilidade = []
+	mCredibilidade= []
+
+	for i in range(nAlternativas):
+		linha=[]
+		for j in range(len(limites[i])):
+			valor = 1
+			if(mDiscordancia[i][j] > mConcordancia[i][j]):
+				valor = 1.0
+			elif(mConcordancia[i][j] == 1.0):
+				valor = 1.0
+			else:
+				# print mDiscordancia[i][j], mConcordancia[i][j]
+				for k in range(nCriterios):
+					valor *= ((1 - mDiscordancia[i][k]) / (1 - mConcordancia[i][j]))
+			linha.append(round(mConcordancia[i][j] * valor, 2))		
+		mCredibilidade.append(linha)
+		print(mCredibilidade[i], cidades[i])
+
+	return mCredibilidade
+	# for i in range(nAlternativas):
+	# 	linha = []
+	# 	for j in range(len(mConcordancia[i])):
+	# 		indiceDiscordanciaMaior = False
+
+	# 		for k in range(nCriterios):
+	# 			if (mDiscordancia[k][i][j] > mConcordancia[i][j]):
+	# 				indiceDiscordanciaMaior = True
+	# 		#print indiceDiscordanciaMaior
+	# 		if (indiceDiscordanciaMaior):
+	# 			resultado1 = 1.0
+	# 			for k in range(nCriterios):
+	# 				resultado1 *= round(((1.0-mDiscordancia[k][i][j])/(1.0-mConcordancia[i][j])), 2)
+	# 			resultado2 = mConcordancia[i][j] * resultado1
+	# 			#print resultado2
+	# 			linha.append(resultado2)
+	# 		else:
+	# 			linha.append(mConcordancia[i][j])
+	# 		#print linha
+	# 	matrizCredibilidade. append(linha)
+
+	# for x in range(nAlternativas):
+	# 	print matrizCredibilidade[x], cidades[x]
+
+	# return matrizCredibilidade
 
 def matrizSubordinacao(cidades, tabela, nAlternativas, nCriterios, p, v, mCredibilidade, lamb):
 	print "\n\nRelação de Subordinação \n"	
