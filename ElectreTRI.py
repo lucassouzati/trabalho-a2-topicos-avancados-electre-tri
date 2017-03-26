@@ -43,7 +43,7 @@ def main():
 	#limite de preferência
 	p = 2.0
 	#limite de indiferença
-	q = 1.5
+	q = 1.0
 	#limite de veto
 	v = 1.0
 	#lambda de corte
@@ -179,6 +179,7 @@ def matrizConcordanciaTRI(cidades, tabela, nAlternativas, nCriterios, vetorPesos
     			else:
     				valor = (p + tabela[i][j] - limites[i][j]) / (p - q)
     			linha.append(valor)
+    			print(valor)
     		mConcordanciaParcial.append(linha)
 
     	# for in in range(nAlternativas):
