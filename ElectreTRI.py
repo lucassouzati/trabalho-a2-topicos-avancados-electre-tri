@@ -171,11 +171,11 @@ def matrizConcordanciaTRI(cidades, tabela, nAlternativas, nCriterios, vetorPesos
     	for i in range(nAlternativas):
     		linha = []
     		for j in range(len(tabela[i])):
-    			valor = 0
+    			valor = 0.0
     			if (limites[i][j] - tabela[i][j]) >= p:
-    				valor = 0
+    				valor = 0.0
     			elif (limites[i][j] - tabela[i][j]) < q:
-    				valor = 1
+    				valor = 1.0
     			else:
     				valor = (p + tabela[i][j] - limites[i][j]) / (p - q)
     			linha.append(valor)
